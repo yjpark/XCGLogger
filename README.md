@@ -4,7 +4,7 @@
 - Twitter: [@CerebralGardens](https://twitter.com/CerebralGardens)
 
 ###tl;dr
-A debug log framework for use in Swift projects. Allows you to log details to the console (and optionally a file), just like you would have with NSLog or println, but with additional information such as the date, function name, filename and line number.
+A debug log module for use in Swift projects. Allows you to log details to the console (and optionally a file), just like you would have with NSLog or println, but with additional information such as the date, function name, filename and line number.
 
 Go from this:
 
@@ -18,13 +18,15 @@ to this:
 
 XCGLogger works in both iOS and OS X projects. It is a Swift library intended for use in Swift projects.
 
-Swift does away with the c preprocessor, which kills the ability to use ```#define``` macros. This means our traditional way of generating nice debug logs is dead. Resorting to just plain old ```println``` calls means you lose a lot of helpful information, or requires you to type a lot more code.
+Swift does away with the C preprocessor, which kills the ability to use ```#define``` macros. This means our traditional way of generating nice debug logs is dead. Resorting to just plain old ```println``` calls means you lose a lot of helpful information, or requires you to type a lot more code.
+
+**Note:** There are a few differences in Swift between 1.0 (Xcode 6) and 1.1 (Xcode 6.1), the code in this repo should work on (and will be updated for) the latest version of Swift by default. If you're using Xcode 6.0.1, I've added a file ```XCGLogger_Xcode601.swift``` to the project that makes XCGLogger backwards compatible. You just need to include the file in the three targets: XCGLogger (iOS), XCGLogger (OS X), and XCGLoggerTests in the XCGLogger project.
 
 ###How to Use
 
-Add the XCGLogger files to your project as an embedded framework.
+Add the XCGLogger project as a subproject to your project, and add either the iOS or OS X library as a dependancy of your target(s).
 
-In each source file:
+Then, in each source file:
 
 ```Swift
 import XCGLogger
@@ -40,13 +42,21 @@ let log = XCGLogger.defaultInstance()
 
 In the 
 ```Swift
-application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?)
+application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: NSDictionary?) // iOS
 ```
+
+or
+
+```Swift
+applicationDidFinishLaunching(aNotification: NSNotification?) // OS X
+```
+
 function, configure the options you need:
 
 ```Swift
 log.setup(logLevel: .Debug, showLogLevel: true, showFileNames: true, showLineNumbers: true, writeToFile: "path/to/file")
 ```
+
 The value for ```writeToFile:``` can be a ```String``` or ```NSURL```. If the file already exists, it will be cleared before we use it. Omit a value or set it to nil to log to the console only.
 
 Then, whenever you'd like to log something, use one of the convenience methods:
@@ -96,7 +106,6 @@ There are convenience methods for each log level:
 ```verboseExec```, ```debugExec```, ```infoExec```, ```errorExec```, ```severeExec```
 
 ###To Do
-- Access NSDateFormatters in a thread safe manner
 - Add examples of some advanced use cases
 - Add additional log destination types
 
@@ -113,8 +122,13 @@ Briefs: http://giveabrief.com/
 
 ###Change Log
 
-* **Version 1.0**: *(2014/06/09)* - Initial Release
-* **Version 1.1**: *(2014/06/22)* - Changed the internal architecture to allow for more flexibility
+* **Version 1.7**: *(2014/09/27)* - Reorganized to be used as a subproject instead of a framework, fixed threading
+* **Version 1.6**: *(2014/09/09)* - Updated for Xcode 6.1 Beta 1
+* **Version 1.5**: *(2014/08/23)* - Updated for Xcode 6 Beta 6
+* **Version 1.4**: *(2014/08/04)* - Updated for Xcode 6 Beta 5, removed __FUNCTION__ workaround
+* **Version 1.3**: *(2014/07/27)* - Updated to use public/internal/private access modifiers
 * **Version 1.2**: *(2014/07/01)* - Added exec methods to selectively execute code
+* **Version 1.1**: *(2014/06/22)* - Changed the internal architecture to allow for more flexibility
+* **Version 1.0**: *(2014/06/09)* - Initial Release
 
 
